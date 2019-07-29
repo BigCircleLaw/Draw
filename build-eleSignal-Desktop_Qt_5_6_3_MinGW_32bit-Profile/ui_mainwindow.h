@@ -32,8 +32,6 @@ public:
     QPushButton *startButton;
     QComboBox *serialPortBox;
     QTextBrowser *textBrowser;
-    QPushButton *beginButton;
-    QPushButton *endButton;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -54,12 +52,6 @@ public:
         textBrowser = new QTextBrowser(centralWidget);
         textBrowser->setObjectName(QStringLiteral("textBrowser"));
         textBrowser->setGeometry(QRect(160, 160, 391, 261));
-        beginButton = new QPushButton(centralWidget);
-        beginButton->setObjectName(QStringLiteral("beginButton"));
-        beginButton->setGeometry(QRect(40, 90, 75, 23));
-        endButton = new QPushButton(centralWidget);
-        endButton->setObjectName(QStringLiteral("endButton"));
-        endButton->setGeometry(QRect(180, 90, 75, 23));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -80,10 +72,8 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", Q_NULLPTR));
-        startButton->setText(QApplication::translate("MainWindow", "\345\210\267\346\226\260", Q_NULLPTR));
+        startButton->setText(QApplication::translate("MainWindow", "PushButton", Q_NULLPTR));
         serialPortBox->setCurrentText(QString());
-        beginButton->setText(QApplication::translate("MainWindow", "\345\274\200\345\247\213", Q_NULLPTR));
-        endButton->setText(QApplication::translate("MainWindow", "\347\273\223\346\235\237", Q_NULLPTR));
     } // retranslateUi
 
 };

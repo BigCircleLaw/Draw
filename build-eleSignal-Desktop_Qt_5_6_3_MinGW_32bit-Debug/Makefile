@@ -192,6 +192,7 @@ Makefile: ../eleSignal/eleSignal.pro C:/Qt/Qt5.6.3/5.6.3/mingw49_32/mkspecs/win3
 		C:/Qt/Qt5.6.3/5.6.3/mingw49_32/mkspecs/features/lex.prf \
 		../eleSignal/eleSignal.pro \
 		C:/Qt/Qt5.6.3/5.6.3/mingw49_32/lib/qtmaind.prl \
+		C:/Qt/Qt5.6.3/5.6.3/mingw49_32/lib/Qt5PrintSupport.prl \
 		C:/Qt/Qt5.6.3/5.6.3/mingw49_32/lib/Qt5Widgets.prl \
 		C:/Qt/Qt5.6.3/5.6.3/mingw49_32/lib/Qt5Gui.prl \
 		C:/Qt/Qt5.6.3/5.6.3/mingw49_32/lib/Qt5SerialPort.prl \
@@ -330,6 +331,7 @@ C:/Qt/Qt5.6.3/5.6.3/mingw49_32/mkspecs/features/yacc.prf:
 C:/Qt/Qt5.6.3/5.6.3/mingw49_32/mkspecs/features/lex.prf:
 ../eleSignal/eleSignal.pro:
 C:/Qt/Qt5.6.3/5.6.3/mingw49_32/lib/qtmaind.prl:
+C:/Qt/Qt5.6.3/5.6.3/mingw49_32/lib/Qt5PrintSupport.prl:
 C:/Qt/Qt5.6.3/5.6.3/mingw49_32/lib/Qt5Widgets.prl:
 C:/Qt/Qt5.6.3/5.6.3/mingw49_32/lib/Qt5Gui.prl:
 C:/Qt/Qt5.6.3/5.6.3/mingw49_32/lib/Qt5SerialPort.prl:

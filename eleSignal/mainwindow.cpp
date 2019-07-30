@@ -9,11 +9,39 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     serial = nullptr;
+
+    for (int i = 0; i < 3; i++)
+    {
+        pix[i] = new QPixmap(PLOT_WIDTH, PLOT_HEIGHT);
+        pix[i]->fill(Qt::black);
+        plot[i] = new QPainter(pix[i]);
+    }
+    plot[0]->setPen(QPen(QColor(Qt::yellow), 2));
+    plot[1]->setPen(QPen(QColor(Qt::blue), 5));
+    plot[2]->setPen(QPen(QColor(Qt::green), 1));
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::on_pushButton_pressed()
+{
+    plot[0]->drawLine(0,0,499, 99);
+
+    plot[1]->drawRect(100,10,300,80);
+    plot[2]->drawEllipse(225,25,50,50);
+    repaint();
+}
+
+void MainWindow::on_pushButton_released()
+{
+     for (int i = 0; i < 3; i++)
+     {
+         pix[i]->fill(Qt::black);
+     }
+     repaint();
 }
 
 void MainWindow::on_startButton_pressed()
@@ -87,7 +115,8 @@ void MainWindow::on_endButton_pressed()
 void MainWindow::serialPut()
 {
     QByteArray temp = serial->readAll();
-    qDebug()<<temp.size();
+//    qDebug()<<temp.size();
+    ui->textBrowser->setText(QString::number(temp.size()));
     for (int i = 0; i < temp.size(); i++)
     {
 //        ui->textBrowser->append(QString::number((unsigned char)temp[i], 16));
@@ -96,11 +125,20 @@ void MainWindow::serialPut()
     }
 }
 
+void MainWindow::paintEvent(QPaintEvent *)
+{
+    QPainter p(this);
+
+    p.drawPixmap(370, 40, PLOT_WIDTH, PLOT_HEIGHT, *pix[0]);
+    p.drawPixmap(370, 180, PLOT_WIDTH, PLOT_HEIGHT, *pix[1]);
+    p.drawPixmap(370, 320, PLOT_WIDTH, PLOT_HEIGHT, *pix[2]);
+}
+
 void MainWindow::RequestHandle(unsigned char*  data, unsigned char len)
 {
     if(9 == len)
     {
-        ui->textBrowser->setText("ADS1294值：");
+
         for (int i = 0; i < 3; i++)
         {
             currentValue[i] = getADS1294Value(data + i * 3);
@@ -167,3 +205,4 @@ void MainWindow::translate(unsigned char * buf)
 
   this->package.index = index;
 }
+

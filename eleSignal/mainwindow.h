@@ -8,6 +8,8 @@
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 
+#include <QPixmap>
+#include <QPainter>
 
 namespace Ui {
 class MainWindow;
@@ -20,6 +22,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    void paintEvent(QPaintEvent *);
 
 private slots:
 
@@ -37,9 +40,15 @@ private slots:
     void Receiver_put(unsigned char data);
     void RequestHandle(unsigned char*  data, unsigned char len);
 
+    void on_pushButton_pressed();
+
+    void on_pushButton_released();
+
 private:
     Ui::MainWindow *ui;
     QSerialPort *serial;
+    QPixmap *pix[3];
+    QPainter *plot[3];
 
     ReceiveData buf;//存放原始数据
     ReceiveData package;//存放转义后数据

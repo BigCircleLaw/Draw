@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include "public.h"
+#include "MyParse.h"
 
 #include <QMainWindow>
 
@@ -10,6 +11,7 @@
 
 #include <QPixmap>
 #include <QPainter>
+#include <QTimer>
 
 namespace Ui {
 class MainWindow;
@@ -36,24 +38,30 @@ private slots:
 
     void serialPut();
 
-    void translate(unsigned char * buf);
-    void Receiver_put(unsigned char data);
-    void RequestHandle(unsigned char*  data, unsigned char len);
-
     void on_pushButton_pressed();
 
     void on_pushButton_released();
+
+    void drawPlot();
 
 private:
     Ui::MainWindow *ui;
     QSerialPort *serial;
     QPixmap *pix[3];
     QPainter *plot[3];
+    MyParse myparse;
+    QTimer *drawTim;
 
     ReceiveData buf;//存放原始数据
     ReceiveData package;//存放转义后数据
 
     long currentValue[3];
+
+
+    void translate(unsigned char * buf);
+    void Receiver_put(unsigned char data);
+    void RequestHandle(unsigned char*  data, unsigned char len);
+
 };
 
 

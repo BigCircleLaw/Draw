@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QDebug>
-#include "MyParse.h"
+#include <QDateTime>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -16,9 +16,12 @@ MainWindow::MainWindow(QWidget *parent) :
         pix[i]->fill(Qt::black);
         plot[i] = new QPainter(pix[i]);
     }
-    plot[0]->setPen(QPen(QColor(Qt::yellow), 2));
-    plot[1]->setPen(QPen(QColor(Qt::blue), 5));
+    plot[0]->setPen(QPen(QColor(Qt::yellow), 1));
+    plot[1]->setPen(QPen(QColor(Qt::blue), 1));
     plot[2]->setPen(QPen(QColor(Qt::green), 1));
+    drawTim = new QTimer(this);
+    connect(drawTim, SIGNAL(timeout()), this, SLOT(drawPlot()));
+    drawTim->start(30);
 }
 
 MainWindow::~MainWindow()
@@ -26,22 +29,38 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::drawPlot()
+{
+    int *data = nullptr, startPosition;
+    data = myparse.getDrawData(startPosition,1);
+    pix[0]->fill(Qt::black);
+    for (int i = 0; i < (pix[0]->width() - 1); i++)
+    {
+        int position = (startPosition + i) % PARSE_DATA_LEN;
+        plot[0]->drawLine(i,data[position],i+1, data[(position + 1) % PARSE_DATA_LEN]);
+        qDebug() << data[position] << data[(position + 1) % PARSE_DATA_LEN];
+    }
+    repaint();
+//    QDateTime time = QDateTime::currentDateTime();
+//    QString str = time.toString("yyyy-MM-dd hh:mm:ss dddd");
+//    ui->textBrowser->setText(str);
+}
 void MainWindow::on_pushButton_pressed()
 {
-    plot[0]->drawLine(0,0,499, 99);
+//    plot[0]->drawLine(0,0,499, 99);
 
-    plot[1]->drawRect(100,10,300,80);
-    plot[2]->drawEllipse(225,25,50,50);
-    repaint();
+//    plot[1]->drawRect(100,10,300,80);
+//    plot[2]->drawEllipse(225,25,50,50);
+//    repaint();
 }
 
 void MainWindow::on_pushButton_released()
 {
-     for (int i = 0; i < 3; i++)
-     {
-         pix[i]->fill(Qt::black);
-     }
-     repaint();
+//     for (int i = 0; i < 3; i++)
+//     {
+//         pix[i]->fill(Qt::black);
+//     }
+//     repaint();
 }
 
 void MainWindow::on_startButton_pressed()
@@ -141,8 +160,8 @@ void MainWindow::RequestHandle(unsigned char*  data, unsigned char len)
 
         for (int i = 0; i < 3; i++)
         {
-            currentValue[i] = getADS1294Value(data + i * 3);
-            ui->textBrowser->append(QString::number(currentValue[i]));
+            currentValue[i] = myparse.getADS1294Value(data + i * 3,i);
+//            ui->textBrowser->append(QString::number(currentValue[i]));
         }
 //        qDebug()<<currentValue[0]<<currentValue[1]<<currentValue[2];
     }

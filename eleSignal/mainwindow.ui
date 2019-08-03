@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>947</width>
-    <height>501</height>
+    <width>1000</width>
+    <height>500</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>刷新</string>
+     <string>刷新串口</string>
     </property>
    </widget>
    <widget class="QComboBox" name="serialPortBox">
@@ -44,17 +44,20 @@
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>150</y>
-      <width>221</width>
-      <height>261</height>
+      <y>160</y>
+      <width>220</width>
+      <height>260</height>
      </rect>
     </property>
    </widget>
    <widget class="QPushButton" name="beginButton">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>90</y>
+      <y>80</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -64,10 +67,13 @@
     </property>
    </widget>
    <widget class="QPushButton" name="endButton">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>180</x>
-      <y>90</y>
+      <y>80</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -76,17 +82,65 @@
      <string>结束</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>110</x>
+      <x>40</x>
       <y>10</y>
+      <width>111</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>输入文件保存地址：</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="pathText">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>10</y>
+      <width>681</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>681</width>
+      <height>20</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="startSave">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>120</y>
       <width>75</width>
       <height>23</height>
      </rect>
     </property>
     <property name="text">
-     <string>PushButton</string>
+     <string>开始保存</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="endSave">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>120</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>结束保存</string>
     </property>
    </widget>
   </widget>
@@ -95,7 +149,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>947</width>
+     <width>1000</width>
      <height>23</height>
     </rect>
    </property>

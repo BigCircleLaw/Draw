@@ -15,6 +15,8 @@
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QHeaderView>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QLineEdit>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
@@ -34,7 +36,10 @@ public:
     QTextBrowser *textBrowser;
     QPushButton *beginButton;
     QPushButton *endButton;
-    QPushButton *pushButton;
+    QLabel *label;
+    QLineEdit *pathText;
+    QPushButton *startSave;
+    QPushButton *endSave;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -43,7 +48,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(947, 501);
+        MainWindow->resize(1000, 500);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         startButton = new QPushButton(centralWidget);
@@ -54,20 +59,34 @@ public:
         serialPortBox->setGeometry(QRect(180, 40, 75, 23));
         textBrowser = new QTextBrowser(centralWidget);
         textBrowser->setObjectName(QStringLiteral("textBrowser"));
-        textBrowser->setGeometry(QRect(40, 150, 221, 261));
+        textBrowser->setGeometry(QRect(40, 160, 220, 260));
         beginButton = new QPushButton(centralWidget);
         beginButton->setObjectName(QStringLiteral("beginButton"));
-        beginButton->setGeometry(QRect(40, 90, 75, 23));
+        beginButton->setEnabled(true);
+        beginButton->setGeometry(QRect(40, 80, 75, 23));
         endButton = new QPushButton(centralWidget);
         endButton->setObjectName(QStringLiteral("endButton"));
-        endButton->setGeometry(QRect(180, 90, 75, 23));
-        pushButton = new QPushButton(centralWidget);
-        pushButton->setObjectName(QStringLiteral("pushButton"));
-        pushButton->setGeometry(QRect(110, 10, 75, 23));
+        endButton->setEnabled(false);
+        endButton->setGeometry(QRect(180, 80, 75, 23));
+        label = new QLabel(centralWidget);
+        label->setObjectName(QStringLiteral("label"));
+        label->setGeometry(QRect(40, 10, 111, 20));
+        pathText = new QLineEdit(centralWidget);
+        pathText->setObjectName(QStringLiteral("pathText"));
+        pathText->setGeometry(QRect(180, 10, 681, 20));
+        pathText->setMaximumSize(QSize(681, 20));
+        startSave = new QPushButton(centralWidget);
+        startSave->setObjectName(QStringLiteral("startSave"));
+        startSave->setEnabled(false);
+        startSave->setGeometry(QRect(40, 120, 75, 23));
+        endSave = new QPushButton(centralWidget);
+        endSave->setObjectName(QStringLiteral("endSave"));
+        endSave->setEnabled(false);
+        endSave->setGeometry(QRect(180, 120, 75, 23));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 947, 23));
+        menuBar->setGeometry(QRect(0, 0, 1000, 23));
         MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
@@ -84,11 +103,13 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", Q_NULLPTR));
-        startButton->setText(QApplication::translate("MainWindow", "\345\210\267\346\226\260", Q_NULLPTR));
+        startButton->setText(QApplication::translate("MainWindow", "\345\210\267\346\226\260\344\270\262\345\217\243", Q_NULLPTR));
         serialPortBox->setCurrentText(QString());
         beginButton->setText(QApplication::translate("MainWindow", "\345\274\200\345\247\213", Q_NULLPTR));
         endButton->setText(QApplication::translate("MainWindow", "\347\273\223\346\235\237", Q_NULLPTR));
-        pushButton->setText(QApplication::translate("MainWindow", "PushButton", Q_NULLPTR));
+        label->setText(QApplication::translate("MainWindow", "\350\276\223\345\205\245\346\226\207\344\273\266\344\277\235\345\255\230\345\234\260\345\235\200\357\274\232", Q_NULLPTR));
+        startSave->setText(QApplication::translate("MainWindow", "\345\274\200\345\247\213\344\277\235\345\255\230", Q_NULLPTR));
+        endSave->setText(QApplication::translate("MainWindow", "\347\273\223\346\235\237\344\277\235\345\255\230", Q_NULLPTR));
     } // retranslateUi
 
 };

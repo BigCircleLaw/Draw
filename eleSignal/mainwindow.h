@@ -38,11 +38,11 @@ private slots:
 
     void serialPut();
 
-    void on_pushButton_pressed();
-
-    void on_pushButton_released();
-
     void drawPlot();
+
+    void on_startSave_pressed();
+
+    void on_endSave_pressed();
 
 private:
     Ui::MainWindow *ui;

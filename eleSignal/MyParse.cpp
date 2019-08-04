@@ -2,6 +2,12 @@
 #include "MyParse.h"
 #include <qDebug>
 
+#define PI 3.1415926
+#define CUT_FRE 5
+#define SAMPLE_FRE 500
+
+#define FILTER_50HZ_LEN 10
+
 MyParse::MyParse(/* args */)
 {
     for (int i = 0; i < 3; i++)
@@ -23,10 +29,14 @@ MyParse::MyParse(/* args */)
         f[i] = nullptr;
         txtOutput[i] = nullptr;
     }
+    double RC = 0.5 / 3.1415926 / CUT_FRE;
+    coff = RC / (RC + 1 / SAMPLE_FRE);
+    // coff = 1 / (1 + 2 * PI * CUT_FRE / SAMPLE_FRE);
 }
 
 MyParse::~MyParse()
 {
+    end();
 }
 
 long MyParse::getADS1294Value(unsigned char *data)
@@ -57,11 +67,11 @@ long MyParse::getADS1294Value(unsigned char *data, int id)
 
 void MyParse::putDrawData(long val, int id)
 {
-//    int value = val / 167773 + 50;
+    int value = val / 167773;
     int position = drawData[id].position;
     drawData[id].position = position = (position + PARSE_DATA_LEN - 1) % PARSE_DATA_LEN;
-    drawData[id].data[position] = (val / 167773.0)*10 + 50;
-//    filter50HZ(value, id);
+    drawData[id].data[position] = filter50HZ(value, id) + 50;
+
     // if ((drawData[id].data[position] > 80) || (drawData[id].data[position] < 20))
     // {
     //     qDebug()<<drawData[id].data[position];
@@ -87,22 +97,32 @@ int *MyParse::getDrawData(int &p, int id)
 
 int MyParse::filterHighPass(int data, int id)
 {
-    int val = 0;
-    return data + id;
+    static int last_data[3] = {0, 0, 0};
+    int val = coff * (data - last_data[id] + filterData[id].data[filterData[id].position]);
+    last_data[id] = data;
+    return val;
 }
 
 int MyParse::filter50HZ(int data, int id)
 {
+    int *p = filterData[id].data;
+    unsigned int position = filterData[id].position;
+    filterData[id].position = position = (position + FILTER_DATA_LEN - 1) % FILTER_DATA_LEN;
+    p[position] = filterHighPass(data, id);
+    long sum = 0;
+    for (int i = 0; i < FILTER_50HZ_LEN; i++)
+    {
+        sum += p[(position + i) % FILTER_DATA_LEN];
+    }
 
-    filterHighPass(data, id);
-    return 0;
+    return (sum / FILTER_DATA_LEN + (p[position] - p[(position + FILTER_DATA_LEN) % FILTER_DATA_LEN]) / FILTER_DATA_LEN * (FILTER_DATA_LEN - 1) / 2);
 }
 
 bool MyParse::begin(QString path, QString timeStr)
 {
-    f[0] = new QFile(path + "\\data" + QString::number(0) + " " + timeStr + ".txt");
-    f[1] = new QFile(path + "\\data" + QString::number(1) + " " + timeStr + ".txt");
-    f[2] = new QFile(path + "\\data" + QString::number(2) + " " + timeStr + ".txt");
+    f[0] = new QFile(path + "\\" + timeStr + " data" + QString::number(0) + ".txt");
+    f[1] = new QFile(path + "\\" + timeStr + " data" + QString::number(1) + ".txt");
+    f[2] = new QFile(path + "\\" + timeStr + " data" + QString::number(2) + ".txt");
 
     for (unsigned char i = 0; i < 3; i++)
     {

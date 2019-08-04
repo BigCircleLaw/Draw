@@ -35,6 +35,7 @@ private:
     DrawData drawData[3];
     FilterData filterData[3];
     // OriginalData orginalData[3];
+    double coff;
     QFile *f[3];
     QTextStream *txtOutput[3];
 

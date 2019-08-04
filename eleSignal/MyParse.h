@@ -17,7 +17,7 @@ typedef struct _DrawData
 typedef struct _FilterData
 {
     /* data */
-    int data[FILTER_DATA_LEN];
+    double data[FILTER_DATA_LEN];
     unsigned int position;
 } FilterData;
 
@@ -41,8 +41,8 @@ private:
 
     void putDrawData(long val, int id);
     void putOriginalData(long val, int id);
-    int filterHighPass(int data, int id);
-    int filter50HZ(int data, int id);
+    double filterHighPass(double data, int id);
+    double filter50HZ(double data, int id);
 
 public:
     MyParse(/* args */);

@@ -3,7 +3,7 @@
 #include <qDebug>
 
 #define PI 3.1415926
-#define CUT_FRE 5
+#define CUT_FRE 1
 #define SAMPLE_FRE 500
 
 #define FILTER_50HZ_LEN 10
@@ -20,7 +20,7 @@ MyParse::MyParse(/* args */)
         for (int j = 0; j < FILTER_DATA_LEN; j++)
         {
             /* code */
-            filterData[i].data[j] = 50;
+            filterData[i].data[j] = 0;
         }
 
         drawData[i].position = 0;
@@ -29,9 +29,9 @@ MyParse::MyParse(/* args */)
         f[i] = nullptr;
         txtOutput[i] = nullptr;
     }
-    double RC = 0.5 / 3.1415926 / CUT_FRE;
-    coff = RC / (RC + 1 / SAMPLE_FRE);
-    // coff = 1 / (1 + 2 * PI * CUT_FRE / SAMPLE_FRE);
+//    double RC = 0.5 / 3.1415926 / CUT_FRE;
+//    coff = RC / (RC + 1 / SAMPLE_FRE);
+    coff = 1 / (1 + 2 * PI * CUT_FRE / SAMPLE_FRE);
 }
 
 MyParse::~MyParse()
@@ -67,10 +67,11 @@ long MyParse::getADS1294Value(unsigned char *data, int id)
 
 void MyParse::putDrawData(long val, int id)
 {
-    int value = val / 167773;
+    double value = val / 167773.0;
     int position = drawData[id].position;
     drawData[id].position = position = (position + PARSE_DATA_LEN - 1) % PARSE_DATA_LEN;
     drawData[id].data[position] = filter50HZ(value, id) + 50;
+//    drawData[id].data[position] = filterHighPass(value, id) + 50;
 
     // if ((drawData[id].data[position] > 80) || (drawData[id].data[position] < 20))
     // {
@@ -95,27 +96,28 @@ int *MyParse::getDrawData(int &p, int id)
     return (int *)drawData[id].data;
 }
 
-int MyParse::filterHighPass(int data, int id)
+double MyParse::filterHighPass(double data, int id)
 {
-    static int last_data[3] = {0, 0, 0};
-    int val = coff * (data - last_data[id] + filterData[id].data[filterData[id].position]);
+    static double last_data[3] = {0, 0, 0};
+    double val = coff * (data - last_data[id] + filterData[id].data[filterData[id].position]);
     last_data[id] = data;
     return val;
 }
 
-int MyParse::filter50HZ(int data, int id)
+double MyParse::filter50HZ(double data, int id)
 {
-    int *p = filterData[id].data;
+    double *p = filterData[id].data;
     unsigned int position = filterData[id].position;
     filterData[id].position = position = (position + FILTER_DATA_LEN - 1) % FILTER_DATA_LEN;
     p[position] = filterHighPass(data, id);
-    long sum = 0;
+//    p[position] = data;
+    double sum = 0;
     for (int i = 0; i < FILTER_50HZ_LEN; i++)
     {
         sum += p[(position + i) % FILTER_DATA_LEN];
     }
-
-    return (sum / FILTER_DATA_LEN + (p[position] - p[(position + FILTER_DATA_LEN) % FILTER_DATA_LEN]) / FILTER_DATA_LEN * (FILTER_DATA_LEN - 1) / 2);
+    double val = (sum / FILTER_DATA_LEN + (p[position] - p[(position + FILTER_DATA_LEN) % FILTER_DATA_LEN]) / FILTER_DATA_LEN * (FILTER_DATA_LEN - 1) / 2);
+    return val;
 }
 
 bool MyParse::begin(QString path, QString timeStr)

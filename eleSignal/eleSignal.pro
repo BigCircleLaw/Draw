@@ -6,7 +6,6 @@
 
 QT       += core gui
 QT       += serialport
-QT       += core gui printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -15,12 +14,11 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
+        mainwindow.cpp \ 
     MyParse.cpp
 
 HEADERS  += mainwindow.h \
     public.h \
-    MyParse.h \
-    qcustomplot.h
+    MyParse.h 
 
 FORMS    += mainwindow.ui

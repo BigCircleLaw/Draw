@@ -29,8 +29,8 @@ MyParse::MyParse(/* args */)
         f[i] = nullptr;
         txtOutput[i] = nullptr;
     }
-//    double RC = 0.5 / 3.1415926 / CUT_FRE;
-//    coff = RC / (RC + 1 / SAMPLE_FRE);
+    //    double RC = 0.5 / 3.1415926 / CUT_FRE;
+    //    coff = RC / (RC + 1 / SAMPLE_FRE);
     coff = 1 / (1 + 2 * PI * CUT_FRE / SAMPLE_FRE);
 }
 
@@ -71,7 +71,7 @@ void MyParse::putDrawData(long val, int id)
     int position = drawData[id].position;
     drawData[id].position = position = (position + PARSE_DATA_LEN - 1) % PARSE_DATA_LEN;
     drawData[id].data[position] = filter50HZ(value, id) + 50;
-//    drawData[id].data[position] = filterHighPass(value, id) + 50;
+    //    drawData[id].data[position] = filterHighPass(value, id) + 50;
 
     // if ((drawData[id].data[position] > 80) || (drawData[id].data[position] < 20))
     // {
@@ -108,9 +108,10 @@ double MyParse::filter50HZ(double data, int id)
 {
     double *p = filterData[id].data;
     unsigned int position = filterData[id].position;
-    filterData[id].position = position = (position + FILTER_DATA_LEN - 1) % FILTER_DATA_LEN;
+    position = (position + FILTER_DATA_LEN - 1) % FILTER_DATA_LEN;
     p[position] = filterHighPass(data, id);
-//    p[position] = data;
+    filterData[id].position = position;
+    //    p[position] = data;
     double sum = 0;
     for (int i = 0; i < FILTER_50HZ_LEN; i++)
     {

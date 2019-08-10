@@ -1,3 +1,10 @@
+/*
+ * @Description: In User Settings Edit
+ * @Author: your name
+ * @Date: 2019-08-05 21:16:21
+ * @LastEditTime: 2019-08-10 15:37:58
+ * @LastEditors: Please set LastEditors
+ */
 
 #include "MyParse.h"
 #include "public.h"
@@ -83,7 +90,7 @@ void MyParse::putDrawData(long val, int id)
 
     value = filterHighPass(value, id);
 
-//    value = filterLowPass(value, id);
+    //    value = filterLowPass(value, id);
 
     value = filter50HZ(value, id);
 
@@ -122,7 +129,7 @@ double MyParse::filterHighPass(double data, int id)
 double MyParse::filterLowPass(double data, int id)
 {
     static double last_out[3] = {0, 0, 0};
-    double val = coff2 * data + ( 1 - coff2 ) * last_out[id];
+    double val = coff2 * data + (1 - coff2) * last_out[id];
     last_out[id] = val;
     return val;
 }
@@ -132,7 +139,7 @@ double MyParse::filter50HZ(double data, int id)
     double *p = filterData[id].data;
     unsigned int position = filterData[id].position;
     position = (position + FILTER_DATA_LEN - 1) % FILTER_DATA_LEN;
-//    p[position] = filterHighPass(data, id);
+    //    p[position] = filterHighPass(data, id);
     p[position] = data;
     filterData[id].position = position;
     //    p[position] = data;

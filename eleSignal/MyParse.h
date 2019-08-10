@@ -5,7 +5,8 @@
 #include <QFile>
 #include <QTextStream>
 
-#define PARSE_DATA_LEN 1000
+#define DRAW_STEP_VAL   2
+#define PARSE_DATA_LEN 2000
 typedef struct _DrawData
 {
     /* data */
@@ -34,14 +35,18 @@ private:
     /* data */
     DrawData drawData[3];
     FilterData filterData[3];
+    double multiple[3];
     // OriginalData orginalData[3];
-    double coff;
+    double coff[3], coff2;
     QFile *f[3];
     QTextStream *txtOutput[3];
+    double drawDivisor;
+    int drawBase;
 
     void putDrawData(long val, int id);
     void putOriginalData(long val, int id);
     double filterHighPass(double data, int id);
+    double filterLowPass(double data, int id);
     double filter50HZ(double data, int id);
 
 public:

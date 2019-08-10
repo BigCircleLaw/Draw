@@ -9,7 +9,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui->setupUi(this);
     serial = nullptr;
 
-    setFixedSize(1000, 500);
+    setFixedSize(1400, 800);
     //    setWindowFlags(Qt::WindowCloseButtonHint);
 
     for (int i = 0; i < 3; i++)
@@ -19,11 +19,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
         plot[i] = new QPainter(pix[i]);
     }
     plot[0]->setPen(QPen(QColor(Qt::yellow), 1));
-    plot[1]->setPen(QPen(QColor(Qt::blue), 1));
+    plot[1]->setPen(QPen(QColor(Qt::red), 1));
     plot[2]->setPen(QPen(QColor(Qt::green), 1));
     drawTim = new QTimer(this);
     connect(drawTim, SIGNAL(timeout()), this, SLOT(drawPlot()));
-    drawTim->start(50);
+    drawTim->start(100);
 
     ui->pathText->setText(QCoreApplication::applicationDirPath());
 }
@@ -46,8 +46,8 @@ void MainWindow::drawPlot()
     {
         for (unsigned char j = 0; j < 3; j++)
         {
-            int position = (startPosition[j] + i) % PARSE_DATA_LEN;
-            plot[j]->drawLine(i, data[j][position], i + 1, data[j][(position + 1) % PARSE_DATA_LEN]);
+            int position = (startPosition[j] + i * DRAW_STEP_VAL) % PARSE_DATA_LEN;
+            plot[j]->drawLine(i, data[j][position], i + 1, data[j][(position + DRAW_STEP_VAL) % PARSE_DATA_LEN]);
         }
         //        qDebug() << data[position] << data[(position + 1) % PARSE_DATA_LEN];
     }
@@ -99,11 +99,12 @@ void MainWindow::on_beginButton_pressed()
     if (!serial->open(QIODevice::ReadWrite)) //用ReadWrite 的模式尝试打开串口
     {
         qDebug() << ui->serialPortBox->currentText() << "打开失败!";
+        ui->textBrowser->append("串口打开失败!！");
         return;
     }
     //打开成功
     qDebug() << serial->isOpen();
-    serial->setBaudRate(QSerialPort::Baud115200, QSerialPort::AllDirections); //设置波特率和读写方向
+    serial->setBaudRate(256000, QSerialPort::AllDirections); //设置波特率和读写方向
     serial->setDataBits(QSerialPort::Data8);                                  //数据位为8位
     serial->setFlowControl(QSerialPort::NoFlowControl);                       //无流控制
     serial->setParity(QSerialPort::NoParity);                                 //无校验位
@@ -166,9 +167,9 @@ void MainWindow::paintEvent(QPaintEvent *)
 {
     QPainter p(this);
 
-    p.drawPixmap(370, 50, PLOT_WIDTH, PLOT_HEIGHT, *pix[0]);
-    p.drawPixmap(370, 190, PLOT_WIDTH, PLOT_HEIGHT, *pix[1]);
-    p.drawPixmap(370, 330, PLOT_WIDTH, PLOT_HEIGHT, *pix[2]);
+    p.drawPixmap(320, 70, PLOT_WIDTH, PLOT_HEIGHT, *pix[0]);
+    p.drawPixmap(320, 320, PLOT_WIDTH, PLOT_HEIGHT, *pix[1]);
+    p.drawPixmap(320, 570, PLOT_WIDTH, PLOT_HEIGHT, *pix[2]);
 }
 
 void MainWindow::RequestHandle(unsigned char *data, unsigned char len)

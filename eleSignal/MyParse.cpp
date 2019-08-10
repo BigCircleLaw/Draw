@@ -1,20 +1,23 @@
 
 #include "MyParse.h"
+#include "public.h"
 #include <qDebug>
 
 #define PI 3.1415926
 #define CUT_FRE 1
-#define SAMPLE_FRE 500
+#define SAMPLE_FRE 1000
 
-#define FILTER_50HZ_LEN 10
+#define FILTER_50HZ_LEN 20
 
 MyParse::MyParse(/* args */)
 {
+    drawDivisor = 16777216.0 / (double)PLOT_HEIGHT;
+    drawBase = PLOT_HEIGHT / 2;
     for (int i = 0; i < 3; i++)
     {
         for (int j = 0; j < PARSE_DATA_LEN; j++)
         {
-            drawData[i].data[j] = 50;
+            drawData[i].data[j] = drawBase;
             // orginalData[i].data[j] = 0;
         }
         for (int j = 0; j < FILTER_DATA_LEN; j++)
@@ -31,7 +34,14 @@ MyParse::MyParse(/* args */)
     }
     //    double RC = 0.5 / 3.1415926 / CUT_FRE;
     //    coff = RC / (RC + 1 / SAMPLE_FRE);
-    coff = 1 / (1 + 2 * PI * CUT_FRE / SAMPLE_FRE);
+    coff[0] = 1 / (1 + 2 * PI * 10 / SAMPLE_FRE);
+    coff[1] = 1 / (1 + 2 * PI * 5 / SAMPLE_FRE);
+    coff[2] = 1 / (1 + 2 * PI * 5 / SAMPLE_FRE);
+    double b = 2 * PI * 100.0 / SAMPLE_FRE;
+    coff2 = b / (1 + b);
+    multiple[0] = 500;
+    multiple[1] = 200;
+    multiple[2] = 200;
 }
 
 MyParse::~MyParse()
@@ -67,16 +77,19 @@ long MyParse::getADS1294Value(unsigned char *data, int id)
 
 void MyParse::putDrawData(long val, int id)
 {
-    double value = val / 167773.0;
+    double value = val / drawDivisor;
     int position = drawData[id].position;
     drawData[id].position = position = (position + PARSE_DATA_LEN - 1) % PARSE_DATA_LEN;
-    drawData[id].data[position] = filter50HZ(value, id) + 50;
-    //    drawData[id].data[position] = filterHighPass(value, id) + 50;
 
-    // if ((drawData[id].data[position] > 80) || (drawData[id].data[position] < 20))
-    // {
-    //     qDebug()<<drawData[id].data[position];
-    // }
+    value = filterHighPass(value, id);
+
+//    value = filterLowPass(value, id);
+
+    value = filter50HZ(value, id);
+
+    value = value * multiple[id];
+
+    drawData[id].data[position] = value + drawBase;
 }
 void MyParse::putOriginalData(long val, int id)
 {
@@ -99,8 +112,18 @@ int *MyParse::getDrawData(int &p, int id)
 double MyParse::filterHighPass(double data, int id)
 {
     static double last_data[3] = {0, 0, 0};
-    double val = coff * (data - last_data[id] + filterData[id].data[filterData[id].position]);
+    static double last_out[3] = {0, 0, 0};
+    double val = coff[id] * (data - last_data[id] + last_out[id]);
     last_data[id] = data;
+    last_out[id] = val;
+    return val;
+}
+
+double MyParse::filterLowPass(double data, int id)
+{
+    static double last_out[3] = {0, 0, 0};
+    double val = coff2 * data + ( 1 - coff2 ) * last_out[id];
+    last_out[id] = val;
     return val;
 }
 
@@ -109,11 +132,12 @@ double MyParse::filter50HZ(double data, int id)
     double *p = filterData[id].data;
     unsigned int position = filterData[id].position;
     position = (position + FILTER_DATA_LEN - 1) % FILTER_DATA_LEN;
-    p[position] = filterHighPass(data, id);
+//    p[position] = filterHighPass(data, id);
+    p[position] = data;
     filterData[id].position = position;
     //    p[position] = data;
     double sum = 0;
-    for (int i = 0; i < FILTER_50HZ_LEN; i++)
+    for (int i = 0; i < FILTER_50HZ_LEN; i += 1)
     {
         sum += p[(position + i) % FILTER_DATA_LEN];
     }

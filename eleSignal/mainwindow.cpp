@@ -26,6 +26,22 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     drawTim->start(100);
 
     ui->pathText->setText(QCoreApplication::applicationDirPath());
+
+    showState[0] = ui->checkBox;
+    showState[1] = ui->checkBox_2;
+    showState[2] = ui->checkBox_3;
+    showState[3] = ui->checkBox_4;
+    showState[4] = ui->checkBox_5;
+    showState[5] = ui->checkBox_6;
+
+    for (int i = 0; i < 6; i++)
+    {
+        showState[i]->setTristate();
+    }
+    stateVal[0] = 0;
+    stateVal[1] = 0;
+    // showState[0]->setCheckState(Qt::PartiallyChecked);
+    // showState[1]->setChecked(false);
 }
 
 MainWindow::~MainWindow()
@@ -50,6 +66,26 @@ void MainWindow::drawPlot()
             plot[j]->drawLine(i, data[j][position], i + 1, data[j][(position + DRAW_STEP_VAL) % PARSE_DATA_LEN]);
         }
         //        qDebug() << data[position] << data[(position + 1) % PARSE_DATA_LEN];
+    }
+    for (int i = 0; i < 3; i++)
+    {
+
+        if ((stateVal[0] & (0x10 << i)) != 0)
+        {
+            showState[i]->setCheckState(Qt::PartiallyChecked);
+        }
+        else
+        {
+            showState[i]->setCheckState(Qt::Unchecked);
+        }
+        if ((stateVal[1] & (0x10 << i)) != 0)
+        {
+            showState[i + 3]->setCheckState(Qt::PartiallyChecked);
+        }
+        else
+        {
+            showState[i + 3]->setCheckState(Qt::Unchecked);
+        }
     }
     repaint();
 }
@@ -104,11 +140,11 @@ void MainWindow::on_beginButton_pressed()
     }
     //打开成功
     qDebug() << serial->isOpen();
-    serial->setBaudRate(256000, QSerialPort::AllDirections); //设置波特率和读写方向
-    serial->setDataBits(QSerialPort::Data8);                                  //数据位为8位
-    serial->setFlowControl(QSerialPort::NoFlowControl);                       //无流控制
-    serial->setParity(QSerialPort::NoParity);                                 //无校验位
-    serial->setStopBits(QSerialPort::OneStop);                                //一位停止位
+    serial->setBaudRate(512000, QSerialPort::AllDirections); //设置波特率和读写方向
+    serial->setDataBits(QSerialPort::Data8);                 //数据位为8位
+    serial->setFlowControl(QSerialPort::NoFlowControl);      //无流控制
+    serial->setParity(QSerialPort::NoParity);                //无校验位
+    serial->setStopBits(QSerialPort::OneStop);               //一位停止位
     serial->setDataTerminalReady(true);
     serial->setReadBufferSize(2048);
     connect(serial, SIGNAL(readyRead()), this, SLOT(serialPut()));
@@ -118,14 +154,14 @@ void MainWindow::on_beginButton_pressed()
     ui->startSave->setEnabled(true);
     ui->endSave->setEnabled(false);
 
-    unsigned char startCmd[3] ={0xFF, 0x01, 0xFE};
+    unsigned char startCmd[3] = {0xFF, 0x01, 0xFE};
     serial->write((const char *)startCmd, 3);
 }
 
 void MainWindow::on_endButton_pressed()
 {
 
-    unsigned char endCmd[3] ={0xFF, 0x02, 0xFE};
+    unsigned char endCmd[3] = {0xFF, 0x02, 0xFE};
     serial->write((const char *)endCmd, 3);
     if (serial != nullptr)
     {
@@ -174,12 +210,13 @@ void MainWindow::paintEvent(QPaintEvent *)
 
 void MainWindow::RequestHandle(unsigned char *data, unsigned char len)
 {
-    if (9 == len)
+    if (12 == len)
     {
-
+        stateVal[0] = data[1];
+        stateVal[1] = data[2];
         for (int i = 0; i < 3; i++)
         {
-            currentValue[i] = myparse.getADS1294Value(data + i * 3, i);
+            currentValue[i] = myparse.getADS1294Value(data + 3 + i * 3, i);
             //            ui->textBrowser->append(QString::number(currentValue[i]));
         }
         //        qDebug()<<currentValue[0]<<currentValue[1]<<currentValue[2];
@@ -247,7 +284,7 @@ void MainWindow::on_startSave_pressed()
 
     QDateTime current_time = QDateTime::currentDateTime();
     bool state = myparse.begin(ui->pathText->text(), current_time.toString("yyyy-MM-dd hh-mm-ss"));
-    if( !state )
+    if (!state)
     {
         ui->textBrowser->append("文件打开失败!!!");
     }

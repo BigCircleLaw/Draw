@@ -12,8 +12,10 @@
 #include <QPixmap>
 #include <QPainter>
 #include <QTimer>
+#include <QCheckBox>
 
-namespace Ui {
+namespace Ui
+{
 class MainWindow;
 }
 
@@ -52,17 +54,18 @@ private:
     MyParse myparse;
     QTimer *drawTim;
 
-    ReceiveData buf;//存放原始数据
-    ReceiveData package;//存放转义后数据
+    QCheckBox *showState[6];
+
+    ReceiveData buf;     //存放原始数据
+    ReceiveData package; //存放转义后数据
+
+    unsigned char stateVal[2];
 
     long currentValue[3];
 
-
-    void translate(unsigned char * buf);
+    void translate(unsigned char *buf);
     void Receiver_put(unsigned char data);
-    void RequestHandle(unsigned char*  data, unsigned char len);
-
+    void RequestHandle(unsigned char *data, unsigned char len);
 };
-
 
 #endif // MAINWINDOW_H

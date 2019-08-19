@@ -40,6 +40,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     }
     stateVal[0] = 0;
     stateVal[1] = 0;
+    flag = 0;
     // showState[0]->setCheckState(Qt::PartiallyChecked);
     // showState[1]->setChecked(false);
 }
@@ -67,26 +68,36 @@ void MainWindow::drawPlot()
         }
         //        qDebug() << data[position] << data[(position + 1) % PARSE_DATA_LEN];
     }
-    for (int i = 0; i < 3; i++)
+    // if(flag == 0)
     {
+        for (int i = 0; i < 3; i++)
+        {
 
-        if ((stateVal[0] & (0x10 << i)) != 0)
-        {
-            showState[i]->setCheckState(Qt::PartiallyChecked);
-        }
-        else
-        {
-            showState[i]->setCheckState(Qt::Unchecked);
-        }
-        if ((stateVal[1] & (0x10 << i)) != 0)
-        {
-            showState[i + 3]->setCheckState(Qt::PartiallyChecked);
-        }
-        else
-        {
-            showState[i + 3]->setCheckState(Qt::Unchecked);
+            if ((stateVal[0] & (0x10 << i)) != 0)
+            {
+                showState[i]->setCheckState(Qt::PartiallyChecked);
+            }
+            else
+            {
+                showState[i]->setCheckState(Qt::Unchecked);
+            }
+            if ((stateVal[1] & (0x10 << i)) != 0)
+            {
+                showState[i + 3]->setCheckState(Qt::PartiallyChecked);
+            }
+            else
+            {
+                showState[i + 3]->setCheckState(Qt::Unchecked);
+            }
         }
     }
+    // else
+    // {
+    //     for (int i = 0; i < 6; i++)
+    //     {
+    //         showState[i]->setCheckState(Qt::Unchecked);
+    //     }
+    // }
     repaint();
 }
 
@@ -153,6 +164,8 @@ void MainWindow::on_beginButton_pressed()
     ui->endButton->setEnabled(true);
     ui->startSave->setEnabled(true);
     ui->endSave->setEnabled(false);
+    ui->enableLoffButton->setEnabled(false);
+    ui->disableLoffButton->setEnabled(true);
 
     unsigned char startCmd[3] = {0xFF, 0x01, 0xFE};
     serial->write((const char *)startCmd, 3);
@@ -184,6 +197,8 @@ void MainWindow::on_endButton_pressed()
     ui->beginButton->setEnabled(true);
     ui->startSave->setEnabled(false);
     ui->endSave->setEnabled(false);
+    ui->disableLoffButton->setEnabled(false);
+    ui->enableLoffButton->setEnabled(false);
 }
 
 void MainWindow::serialPut()
@@ -298,4 +313,26 @@ void MainWindow::on_endSave_pressed()
     myparse.end();
     ui->endSave->setEnabled(false);
     ui->startSave->setEnabled(true);
+}
+
+void MainWindow::on_enableLoffButton_pressed()
+{
+    unsigned char enableLoffCmd[3] = {0xFF, 0x03, 0xFE};
+    serial->write((const char *)enableLoffCmd, 3);
+
+    flag = 0;
+
+    ui->disableLoffButton->setEnabled(true);
+    ui->enableLoffButton->setEnabled(false);
+}
+
+void MainWindow::on_disableLoffButton_pressed()
+{
+    unsigned char disableLoffCmd[3] = {0xFF, 0x04, 0xFE};
+    serial->write((const char *)disableLoffCmd, 3);
+
+    flag = 1;
+
+    ui->enableLoffButton->setEnabled(true);
+    ui->disableLoffButton->setEnabled(false);
 }

@@ -46,6 +46,11 @@ private slots:
 
     void on_endSave_pressed();
 
+
+    void on_enableLoffButton_pressed();
+
+    void on_disableLoffButton_pressed();
+
 private:
     Ui::MainWindow *ui;
     QSerialPort *serial;
@@ -60,6 +65,8 @@ private:
     ReceiveData package; //存放转义后数据
 
     unsigned char stateVal[2];
+
+    unsigned char flag;
 
     long currentValue[3];
 

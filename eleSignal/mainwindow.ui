@@ -143,7 +143,7 @@
      <string>结束保存</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="enableLoffButton">
     <property name="enabled">
      <bool>false</bool>
     </property>
@@ -159,7 +159,10 @@
      <string>开启脱落检测</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_2">
+   <widget class="QPushButton" name="disableLoffButton">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>174</x>
